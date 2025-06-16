@@ -23,8 +23,8 @@ import multiprocessing
 
 #########################################################################################################
 # Set up workspace and trace paths
-workspace_path = Path("E:\\max_fix\\dp_3.40\\workspace")
-trace_path = Path("E:\\max_fix\\dp_3.40\\workspace\\PointcloudLegacy")
+workspace_path = Path("/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/analysis_files")
+trace_path = Path("/mnt/scratch/singhp19/O16_runs")
 
 # Make directory to store beam events
 if not workspace_path.exists():
@@ -33,24 +33,24 @@ beam_events_folder = workspace_path / "beam_events"
 if not beam_events_folder.exists():
     beam_events_folder.mkdir()
 
-run_min = 0
-run_max = 28
+run_min = 72
+run_max = 91
 n_processes = 10
 
 #########################################################################################################
 # Define configuration
 pad_params = PadParameters(
     pad_geometry_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\pad_geometry_legacy.csv"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_geometry_legacy.csv"
     ),
     pad_time_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\pad_time_correction.csv"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_time_correction.csv"
     ),
     pad_electronics_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\pad_electronics_legacy.csv"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_electronics_legacy.csv"
     ),
     pad_scale_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\pad_scale.csv"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_scale.csv"
     ),
 )
 
@@ -59,7 +59,7 @@ get_params = GetParameters(
     peak_separation=5.0,
     peak_prominence=20.0,
     peak_max_width=100.0,
-    peak_threshold=30.0,
+    peak_threshold=100.0, #changed fom 30 
 )
 
 ic_params = ICParameters(
@@ -67,7 +67,7 @@ ic_params = ICParameters(
     peak_separation=5.0,
     peak_prominence=30.0,
     peak_max_width=20.0,
-    peak_threshold=300.0,
+    peak_threshold=300.0, #don't have the IC so doesn't matter
     low_accept=60,
     high_accept=411,
 )
@@ -78,13 +78,13 @@ det_params = DetectorParameters(
     detector_length=1000.0,
     beam_region_radius=20.0,
     drift_velocity_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\drift_velocity.csv"
+        "/mnt/home/singhp19/O16_driftvel_analysis/drift_vel_calc/all_drift_vel.parquet"
     ),
     get_frequency=3.125,
     garfield_file_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\e20009_efield_correction.txt"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/e20009_efield_correction.txt"
     ),
-    do_garfield_correction=False,
+    do_garfield_correction=True,
 )
 
 cluster_params = ClusterParameters(
@@ -105,12 +105,12 @@ estimate_params = EstimateParameters(
 # Protons
 solver_params = SolverParameters(
     gas_data_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\e20009_target.json"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/solver_particle_16O.json"
     ),
     gain_match_factors_path=Path(
-        "C:\\Users\\zachs\\Desktop\\e20009_analysis\\e20009_analysis\\e20009_parameters\\gain_match_factors.csv"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/gain_match_factors.csv"
     ),
-    particle_id_filename=Path("E:\\max_fix\\proton_id.json"),
+    particle_id_filename=Path("/Users/mahesh/Desktop/academics/research/e20009_analysis/solver_particle_16O.json"),
     ic_min_val=300.0,
     ic_max_val=850.0,
     n_time_steps=1300,
@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [False, True, True, True],
+    [True, True, True, False],
     workspace_path,
     trace_path,
 )
