@@ -23,7 +23,7 @@ import multiprocessing
 
 #########################################################################################################
 # Set up workspace and trace paths
-workspace_path = Path("/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/analysis_files")
+workspace_path = Path("/mnt/research/attpc/e20020/O16_spyral_analysis")
 trace_path = Path("/mnt/scratch/singhp19/O16_runs")
 
 # Make directory to store beam events
@@ -33,9 +33,9 @@ beam_events_folder = workspace_path / "beam_events"
 if not beam_events_folder.exists():
     beam_events_folder.mkdir()
 
-run_min = 72
-run_max = 91
-n_processes = 10
+run_min = 101
+run_max = 169
+n_processes = 15
 
 #########################################################################################################
 # Define configuration
@@ -74,7 +74,7 @@ ic_params = ICParameters(
 
 det_params = DetectorParameters(
     magnetic_field=3.0,
-    electric_field=60000.0,
+    electric_field=57260.0, #changing the efield
     detector_length=1000.0,
     beam_region_radius=20.0,
     drift_velocity_path=Path(

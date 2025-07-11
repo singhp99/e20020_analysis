@@ -146,6 +146,7 @@ class PointcloudLegacyPhase(PhaseLike):
         msg_queue: SimpleQueue,
         rng: np.random.Generator,
     ) -> PhaseResult:
+
         trace_path = payload.artifact_path
         if not trace_path.exists():
             spyral_warn(
@@ -176,24 +177,16 @@ class PointcloudLegacyPhase(PhaseLike):
             return PhaseResult.invalid_result(payload.run_number)
 
         # Load drift velocity information
-        dv_lf: pl.LazyFrame = pl.scan_csv(self.det_params.drift_velocity_path)
-        dv_df: pl.DataFrame = dv_lf.filter(
-            pl.col("run") == payload.run_number
-        ).collect()
-        if dv_df.shape[0] > 1:
-            spyral_error(
-                __name__,
-                f"Multiple drift velocities found for run {payload.run_number}, phase 1 cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
-        elif dv_df.shape[0] == 0:
+        dv_lf: pl.LazyFrame = pl.scan_parquet(self.det_params.drift_velocity_path)
+        all_run_numbers = dv_lf.select("run_number").unique().collect()
+        run_numbers_list = all_run_numbers["run_number"].to_list()
+
+        if payload.run_number not in run_numbers_list:
             spyral_error(
                 __name__,
                 f"No drift velocity found for run {payload.run_number}, phase 1 cannot be run!",
             )
             return PhaseResult.invalid_result(payload.run_number)
-        mm_tb: float = dv_df.get_column("average_micromegas_tb")[0]
-        w_tb: float = dv_df.get_column("average_window_tb")[0]
 
         # Beam event results
         beam_events: dict[str, list] = {
@@ -225,93 +218,113 @@ class PointcloudLegacyPhase(PhaseLike):
         msg = StatusMessage(
             self.name, 1, total, payload.run_number
         )  # We always increment by 1
-
+        counter = 0 #to count the total numnber of events I have for double checking
         # Process the data
-        for idx in range(min_event, max_event + 1):
+        for idx in range(min_event, max_event): #drift velocity moved in here max_event + 1
+            counter+=1
+
             count += 1
             if count > flush_val:
                 count = 0
                 msg_queue.put(msg)
-
-            event_data: h5.Dataset
-            event_name = f"evt{idx}_data"
-            if event_name not in event_group:
+                
+            dv_df: pl.DataFrame = dv_lf.filter(
+            (pl.col("run_number") == payload.run_number) & (pl.col("event_number") == idx)).collect()
+            if dv_df.shape[0] == 0:
                 continue
+            elif dv_df.shape[0] > 1:
+                spyral_error(
+                    __name__,
+                    f"Multiple drift velocities found for run {payload.run_number} and event {idx}, phase 1 cannot be run!",
+                )
+                return PhaseResult.invalid_result(payload.run_number)
+
             else:
-                event_data = event_group[event_name]  # type: ignore
+                mm_tb: float = dv_df.get_column("micromegas_tb")[0]
+                w_tb: float = dv_df.get_column("window_tb")[0]
 
-            event = GetLegacyEvent(
-                event_data, idx, self.get_params, self.ic_params, rng
-            )
+                #print(f"event: {idx}, micromegas: {mm_tb}, window: {w_tb} ")
 
-            pc = PointCloud()
-            pc.load_cloud_from_get_event(event, self.pad_map)
-            pc.calibrate_z_position(
-                mm_tb,
-                w_tb,
-                self.det_params.detector_length,
-                corrector,
-            )
+                event_data: h5.Dataset
+                event_name = f"evt{idx}_data"
+                if event_name not in event_group:
+                    continue
+                else:
+                    event_data = event_group[event_name]  # type: ignore
 
-            pc_dataset = cloud_group.create_dataset(
-                f"cloud_{pc.event_number}", shape=pc.cloud.shape, dtype=np.float64
-            )
+                event = GetLegacyEvent(
+                    event_data, idx, self.get_params, self.ic_params, rng
+                )
 
-            # default IC settings
-            pc_dataset.attrs["ic_amplitude"] = -1.0
-            pc_dataset.attrs["ic_integral"] = -1.0
-            pc_dataset.attrs["ic_centroid"] = -1.0
-            pc_dataset.attrs["ic_multiplicity"] = -1.0
+                pc = PointCloud()
+                pc.load_cloud_from_get_event(event, self.pad_map)
+                pc.calibrate_z_position(
+                    mm_tb,
+                    w_tb,
+                    self.det_params.detector_length,
+                    corrector,
+                )
 
-            # default IC SCA settings
-            pc_dataset.attrs["ic_sca_centroid"] = -1.0
-            pc_dataset.attrs["ic_sca_multiplicity"] = -1.0
+                pc_dataset = cloud_group.create_dataset(
+                    f"cloud_{pc.event_number}", shape=pc.cloud.shape, dtype=np.float64
+                )
 
-            # Set IC if present; take first non-garbage peak
-            if event.ic_trace is not None:
-                # No way to disentangle multiplicity
-                for peak in event.ic_trace.get_peaks():
-                    pc_dataset.attrs["ic_amplitude"] = peak.amplitude
-                    pc_dataset.attrs["ic_integral"] = peak.integral
-                    pc_dataset.attrs["ic_centroid"] = peak.centroid
-                    pc_dataset.attrs["ic_multiplicity"] = (
-                        event.ic_trace.get_number_of_peaks()
-                    )
-                    break
+                # default IC settings
+                pc_dataset.attrs["ic_amplitude"] = -1.0
+                pc_dataset.attrs["ic_integral"] = -1.0
+                pc_dataset.attrs["ic_centroid"] = -1.0
+                pc_dataset.attrs["ic_multiplicity"] = -1.0
 
-            # Set IC SCA if present; take first non-garbage peak
-            if event.ic_sca_trace is not None:
-                # No way to disentangle multiplicity
-                for peak in event.ic_sca_trace.get_peaks():
-                    pc_dataset.attrs["ic_sca_centroid"] = peak.centroid
-                    pc_dataset.attrs["ic_sca_multiplicity"] = (
-                        event.ic_sca_trace.get_number_of_peaks()
-                    )
-                    break
+                # default IC SCA settings
+                pc_dataset.attrs["ic_sca_centroid"] = -1.0
+                pc_dataset.attrs["ic_sca_multiplicity"] = -1.0
 
-            # Record beam event information
-            if event.beam_ds_trace is not None:
-                if event.beam_ds_trace.get_number_of_peaks() == 1:
-                    beam_events["event"].append(idx)
-                    beam_events["ic_amplitude"].append(
-                        [peak.amplitude for peak in event.ic_trace.get_peaks()]
-                    )
-                    beam_events["ic_centroid"].append(
-                        [peak.centroid for peak in event.ic_trace.get_peaks()]
-                    )
-                    beam_events["ic_multiplicity"].append(
-                        event.ic_trace.get_number_of_peaks()
-                    )
-                    beam_events["ic_sca_centroid"].append(
-                        [peak.centroid for peak in event.ic_sca_trace.get_peaks()]
-                    )
-                    beam_events["ic_sca_multiplicity"].append(
-                        event.ic_sca_trace.get_number_of_peaks()
-                    )
+                # # Set IC if present; take first non-garbage peak
+                # if event.ic_trace is not None:
+                #     # No way to disentangle multiplicity
+                #     for peak in event.ic_trace.get_peaks():
+                #         pc_dataset.attrs["ic_amplitude"] = peak.amplitude
+                #         pc_dataset.attrs["ic_integral"] = peak.integral
+                #         pc_dataset.attrs["ic_centroid"] = peak.centroid
+                #         pc_dataset.attrs["ic_multiplicity"] = (
+                #             event.ic_trace.get_number_of_peaks()
+                #         )
+                #         break
 
-            pc_dataset[:] = pc.cloud
+                # # Set IC SCA if present; take first non-garbage peak
+                # if event.ic_sca_trace is not None:
+                #     # No way to disentangle multiplicity
+                #     for peak in event.ic_sca_trace.get_peaks():
+                #         pc_dataset.attrs["ic_sca_centroid"] = peak.centroid
+                #         pc_dataset.attrs["ic_sca_multiplicity"] = (
+                #             event.ic_sca_trace.get_number_of_peaks()
+                #         )
+                #         break
 
+                # Record beam event information
+                # if event.beam_ds_trace is not None:
+                #     if event.beam_ds_trace.get_number_of_peaks() == 1:
+                #         beam_events["event"].append(idx)
+                #         # beam_events["ic_amplitude"].append(
+                #         #     [peak.amplitude for peak in event.ic_trace.get_peaks()]
+                #         # )
+                #         beam_events["ic_centroid"].append(
+                #             [peak.centroid for peak in event.ic_trace.get_peaks()]
+                #         )
+                #         beam_events["ic_multiplicity"].append(
+                #             event.ic_trace.get_number_of_peaks()
+                #         )
+                #         beam_events["ic_sca_centroid"].append(
+                #             [peak.centroid for peak in event.ic_sca_trace.get_peaks()]
+                #         )
+                #         beam_events["ic_sca_multiplicity"].append(
+                #             event.ic_sca_trace.get_number_of_peaks()
+                #         )
+                pc_dataset[:] = pc.cloud
+            
+                
         # Write beam events results to a dataframe
+        print(f"Counter: {counter}")
         df = pl.DataFrame(beam_events)
         df.write_parquet(
             workspace_path
@@ -865,12 +878,13 @@ def generate_electron_correction(
     params: DetectorParameters
         Configuration parameters for physical detector properties
     """
-
     # Use average window and micromegas time buckets from all runs in the drift velocity file
-    dv_df: pl.DataFrame = pl.read_csv(params.drift_velocity_path)
-    w_tb_avg = dv_df.select(pl.mean("average_window_tb"))[0, 0]
-    mm_tb_avg = dv_df.select(pl.mean("average_micromegas_tb"))[0, 0]
+    dv_df: pl.DataFrame = pl.scan_parquet(params.drift_velocity_path) #changed from Zach's version
+    drift_tb_avg = dv_df.select(pl.mean("drift_velocity_tb")).collect()
+    drift_avg_value = drift_tb_avg.item()
 
+    print(f"The value of drift velocity for Efield correction: {drift_avg_value}")
+    
     garfield_data: np.ndarray = np.loadtxt(garf_file_path, dtype=float)
 
     chunk_size = 55  # garfield data in 55 row chunks (steps in rho)
@@ -912,7 +926,7 @@ def generate_electron_correction(
         mid_val = chunk[chunk_midpoint_index, 2]
         chunk[:, 2] -= mid_val
         chunk[:, 2] *= (
-            params.detector_length / (w_tb_avg - mm_tb_avg) * params.get_frequency * 0.001
+            params.detector_length / (drift_avg_value) * params.get_frequency * 0.001
         )
 
     interp = BilinearInterpolator(
