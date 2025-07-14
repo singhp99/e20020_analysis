@@ -64,11 +64,44 @@ def combine_h5(run_num, counter_idx):
 
     return counter_idx + 1
 
+def convert(run_num):
+    file = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_000{run_num}.h5", "r")
+    file_label = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_000{run_num}_labels.h5", "r")
 
+    groupn_cr = list(file.keys())[0]
+    group_cr = file[groupn_cr]
+    attributes = dict(group_cr.attrs)
+    min_event = attributes["min_event"]
+    max_event = attributes["max_event"]
+
+    groupn_lab = list(file_label.keys())[0]
+    group_lab = file_label[groupn_lab]
+
+    
+    event_lengths = np.zeros(max_event, int)
+    for i, e in enumerate(group_cr):
+        event_lengths[i] = len(group_cr[e])
+
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_evtlen.npy", event_lengths)
+
+    event_data = np.full((len(event_lengths), np.max(event_lengths) + 2, 4), np.nan)
+
+    for i, e in tqdm.tqdm(enumerate(group_cr)): #tqdm.tqdm(enumerate(overlapping_keys))
+        for n in range(event_lengths[0]):
+            print(n)
+            # print(group_cr[e][n])
+            # event_data[i, n] = group_cr[e][n]
+        # label = int(group_lab[e][()])
+        # event_data[i, -2] = [label] * 4
+        # event_data[i, -1] = [i] * 4
+
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_data.npy", event_data)
 
 if __name__ == "__main__":
-    run_range = [0, 1, 2]
+    run_range = [0,1,2]
     counter = 0
     for run in run_range:
-        counter = combine_h5(run, counter)
-    print(f"Final event count: {counter}")
+        print(f"\n--- Starting run {run} ---")
+        # counter = combine_h5(run, counter)
+        convert(run)
+    # print(f"Final event count: {counter}")
