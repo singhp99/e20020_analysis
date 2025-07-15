@@ -1,6 +1,9 @@
 import h5py
 import numpy as np
 import tqdm
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import sys
 
 def combine_h5(run_num, counter_idx):
     file_3plus = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_spyral/PointcloudLegacy/run_000{run_num}.h5", "r")
@@ -87,21 +90,61 @@ def convert(run_num):
     event_data = np.full((len(event_lengths), np.max(event_lengths) + 2, 4), np.nan)
 
     for i, e in tqdm.tqdm(enumerate(group_cr)): #tqdm.tqdm(enumerate(overlapping_keys))
-        for n in range(event_lengths[0]):
-            print(n)
-            # print(group_cr[e][n])
-            # event_data[i, n] = group_cr[e][n]
-        # label = int(group_lab[e][()])
-        # event_data[i, -2] = [label] * 4
-        # event_data[i, -1] = [i] * 4
+        for n in range(event_lengths[i]):
+            event_data[i, n] = group_cr[e][n,:4]
+        label = int(group_lab[e][()])
+        event_data[i, -2] = [label] * 4
+        event_data[i, -1] = [i] * 4
 
     np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_data.npy", event_data)
 
+
+def view_events(npy_file):
+    data = np.load(npy_file)
+
+    num_events = data.shape[0]
+    print(f"Loaded {num_events} events from: {npy_file}")
+
+    idx = 0
+    while True:
+        event = data[idx]
+        label = int(event[-2, 0])  # label is repeated across 4 values
+        points = event[:-2]        # exclude label and index rows
+        valid_points = points[~np.isnan(points[:, 0])]  # remove padding
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection="3d")
+        ax.scatter(valid_points[:, 0]/250, valid_points[:, 1]/250, valid_points[:, 2]/1000, c="b", marker="o")
+        ax.set_title(f"Event {idx} - Label: {label}")
+        ax.set_xlabel("X")
+        ax.set_ylabel("Y")
+        ax.set_zlabel("Z")
+        plt.tight_layout()
+        plt.show()
+
+        cmd = input("Next [n], Prev [p], Quit [q]: ").strip().lower()
+        if cmd == "n":
+            idx = (idx + 1) % num_events
+        elif cmd == "p":
+            idx = (idx - 1) % num_events
+        elif cmd == "q":
+            break
+        else:
+            print("Invalid command. Use 'n', 'p', or 'q'.")
+
 if __name__ == "__main__":
-    run_range = [0,1,2]
-    counter = 0
-    for run in run_range:
-        print(f"\n--- Starting run {run} ---")
-        # counter = combine_h5(run, counter)
-        convert(run)
-    # print(f"Final event count: {counter}")
+    if len(sys.argv) < 2:
+        print("Usage: python view_npy_events.py path_to_npy_file.npy")
+    else:
+        view_events(sys.argv[1])
+
+
+
+# if __name__ == "__main__":
+#     run_range = [0,1,2]
+#     counter = 0
+#     for run in run_range:
+#         print(f"\n--- Starting run {run} ---")
+#         # counter = combine_h5(run, counter)
+#         convert(run)
+#     # print(f"Final event count: {counter}")
