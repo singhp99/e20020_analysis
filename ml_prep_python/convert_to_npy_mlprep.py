@@ -104,7 +104,7 @@ def view_events(npy_file):
 
     num_events = data.shape[0]
     print(f"Loaded {num_events} events from: {npy_file}")
-
+    #change
     idx = 0
     while True:
         event = data[idx]
