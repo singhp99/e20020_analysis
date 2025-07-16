@@ -18,7 +18,7 @@ def convert_n_combine(run_num):
     for i, e in enumerate(overlapping_keys):
         event_lengths[i] = len(keys[e])
 
-    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_evtlen.npy", event_lengths)
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run000{run_num}_evtlen.npy", event_lengths)
 
     event_data = np.full((len(event_lengths), np.max(event_lengths) + 2, 4), np.nan)
 
@@ -30,7 +30,7 @@ def convert_n_combine(run_num):
         event_data[i, -2] = [label] * 4
         event_data[i, -1] = [i] * 4
 
-    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_data.npy", event_data)
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run000{run_num}_data.npy", event_data)
 
 def main():
     for run in [0,1,2]:  # Update this list with the runs you want
