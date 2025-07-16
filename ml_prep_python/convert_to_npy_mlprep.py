@@ -85,7 +85,7 @@ def convert(run_num):
     for i, e in enumerate(group_cr):
         event_lengths[i] = len(group_cr[e])
 
-    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_evtlen.npy", event_lengths)
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run000{run_num}_evtlen.npy", event_lengths)
 
     event_data = np.full((len(event_lengths), np.max(event_lengths) + 2, 4), np.nan)
 
@@ -96,7 +96,7 @@ def convert(run_num):
         event_data[i, -2] = [label] * 4
         event_data[i, -1] = [i] * 4
 
-    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run0{run_num}_data.npy", event_data)
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run000{run_num}_data.npy", event_data)
 
 
 def view_events(npy_file):
