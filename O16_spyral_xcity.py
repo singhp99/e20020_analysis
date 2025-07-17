@@ -542,13 +542,34 @@ def spyral_engine_viz(name1):
 
 def vertex_z_dist(estimate_df):
     df = pd.read_parquet(estimate_df, engine="pyarrow")
-    filtered_vertex = df[(df["vertex_z"] < 0) | (df["vertex_z"] > 1000)]
-    print(filtered_vertex["vertex_z"])
-    # filtered_vertex["vertex_z"].hist(bins=100)
+    unique_events = np.unique(df["event"])
+    for event in unique_events:
+        filtered_vertex = df.loc[(df["event"] == event)]
+        
+        if len(filtered_vertex) > 2:
+
+            plt.scatter(filtered_vertex["vertex_z"],filtered_vertex["vertex_x"])
+            plt.title(f"Event {event} all vertex_z")
+            plt.xlabel("vertex_z [mm]")
+            plt.ylabel("vertex_x [mm]")
+            plt.show()
+
+            cmd = input("Next [n], Quit [q]: ").strip().lower()
+            if cmd == "q":
+                break
+            elif cmd == "n":
+                continue
+
+        else:
+            continue
+
+    # filtered_vertex = df[(df["vertex_z"] > 1000)]
+    # #print(filtered_vertex["vertex_z"])
+    # filtered_vertex["vertex_z"].hist(bins=500)
     # plt.title("Distribution of all vertex_z")
     # plt.xlabel("vertex_z [mm]")
     # plt.ylabel("Counts")
-    # plt.xlim(0,8000)
+    # plt.xlim(0,4500)
     # plt.show()
 
 
