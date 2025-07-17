@@ -540,16 +540,26 @@ def spyral_engine_viz(name1):
     file_coord.close()
             
 
+def vertex_z_dist(estimate_df):
+    df = pd.read_parquet(estimate_df, engine="pyarrow")
+    filtered_vertex = df[(df["vertex_z"] < 0) | (df["vertex_z"] > 1000)]
+    print(filtered_vertex["vertex_z"])
+    # filtered_vertex["vertex_z"].hist(bins=100)
+    # plt.title("Distribution of all vertex_z")
+    # plt.xlabel("vertex_z [mm]")
+    # plt.ylabel("Counts")
+    # plt.xlim(0,8000)
+    # plt.show()
 
 
 
 def main():
     #for run_num in [271,274,275,277,278,279]:
-    for run_num in [0]: #104,105,106,108,109,110,111,112,113,114,116
+    for run_num in [53]: #104,105,106,108,109,110,111,112,113,114,116
         print(run_num)
         name1 = f"/Users/mahesh/Desktop/academics/spyral_eng/engine_spyral/PointcloudLegacy/run_000{run_num}.h5"
         name2 = "/Users/mahesh/Desktop/academics/research/o16_analysis/Cluster/run_0"+str(run_num)+".h5"
-        estimate_df = f"/Users/mahesh/Desktop/academics/spyral_eng/engine_spyral/Estimation/run_000{run_num}.parquet"
+        estimate_df = f"/Volumes/researchEXT/O16/O16_spyral_analysis/Estimation/run_00{run_num}.parquet"
         est_path = f"/Users/mahesh/Desktop/academics/spyral_eng/engine_ml_prep/run000{run_num}_est_spy.h5"
         bal_mltrain = f"/Users/mahesh/Desktop/academics/spring 2025/applied ml/ml_final_project/data_est/run000{run_num}_data_spy.h5"
 
@@ -569,7 +579,8 @@ def main():
         #num_points_eachevent(name1,est_path)
         #extrt_clusph(name2, bal_mltrain_clus, bal_mltrain_cllabels)
         #engine_count_class(name1)
-        spyral_engine_viz(name1)
+        #spyral_engine_viz(name1)
+        vertex_z_dist(estimate_df)
 
 
 if __name__=="__main__":    
