@@ -297,10 +297,10 @@ class InterpLeastSqSolverPhase(PhaseLike):
         )
 
         # Load drift velocity information
-        dv_lf: pl.LazyFrame = pl.scan_csv(self.det_params.drift_velocity_path)
-        dv_df: pl.DataFrame = dv_lf.filter(
-            pl.col("run") == payload.run_number
-        ).collect()
+        dv_df: pl.DataFrame = pl.scan_parquet(self.det_params.drift_velocity_path) #changed from Zach's version
+        drift_tb_avg = dv_df.select(pl.mean("drift_velocity_tb")).collect()
+        drift_avg_value = drift_tb_avg.item()
+        
         if dv_df.shape[0] > 1:
             spyral_error(
                 __name__,
@@ -313,15 +313,15 @@ class InterpLeastSqSolverPhase(PhaseLike):
                 f"No drift velocity found for run {payload.run_number}, interpolation solver cannot be run!",
             )
             return PhaseResult.invalid_result(payload.run_number)
-        mm_tb: float = dv_df.get_column("average_micromegas_tb")[0]
-        w_tb: float = dv_df.get_column("average_window_tb")[0]
-        mm_err: float = dv_df.get_column("average_micromegas_tb_error")[0]
-        w_err: float = dv_df.get_column("average_window_tb_error")[0]
+        # mm_tb: float = dv_df.get_column("average_micromegas_tb")[0]
+        # w_tb: float = dv_df.get_column("average_window_tb")[0]
+        # mm_err: float = dv_df.get_column("average_micromegas_tb_error")[0]
+        # w_err: float = dv_df.get_column("average_window_tb_error")[0]
 
-        # mm_tb: float = 62
-        # w_tb: float = 396
-        # mm_err: float = 0
-        # w_err: float = 0
+        mm_tb: float = 0
+        w_tb: float = 0
+        mm_err: float = 0
+        w_err: float = 0
 
         # Select the particle group data, beam region of ic, convert to dictionary for row-wise operations
         estimates_gated = estimate_df.filter(

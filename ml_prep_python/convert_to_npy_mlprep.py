@@ -80,8 +80,8 @@ def convert(run_num):
     groupn_lab = list(file_label.keys())[0]
     group_lab = file_label[groupn_lab]
 
-    
-    event_lengths = np.zeros(max_event, int)
+    print(f"Event run {run_num} file lengths: {max_event-min_event}")
+    event_lengths = np.zeros(max_event-min_event, int)
     for i, e in enumerate(group_cr):
         event_lengths[i] = len(group_cr[e])
 
