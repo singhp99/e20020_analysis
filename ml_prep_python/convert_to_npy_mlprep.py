@@ -50,7 +50,7 @@ def combine_h5(run_num, counter_idx):
         if event in group_cr_12 and label_key in group_cr_12:
             labels = np.unique(group_cr_12[label_key])
             size = len(labels)
-            if size <= 2:
+            if size <= 2 and size!=0:
                 new_key = f"event_{counter_idx}"
                 group_out.create_dataset(new_key, data=group_cr_12[event][:])
                 group_label.create_dataset(new_key, data=size)
@@ -105,7 +105,8 @@ def view_events(npy_file):
     num_events = data.shape[0]
     print(f"Loaded {num_events} events from: {npy_file}")
     #change
-    idx = 0
+
+    idx = int(input("Event to look at: "))
     while True:
         event = data[idx]
         label = int(event[-2, 0])  # label is repeated across 4 values
@@ -132,19 +133,19 @@ def view_events(npy_file):
         else:
             print("Invalid command. Use 'n', 'p', or 'q'.")
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python view_npy_events.py path_to_npy_file.npy")
-    else:
-        view_events(sys.argv[1])
-
-
-
 # if __name__ == "__main__":
-#     run_range = [0,1,2]
-#     counter = 0
-#     for run in run_range:
-#         print(f"\n--- Starting run {run} ---")
-#         # counter = combine_h5(run, counter)
-#         convert(run)
-#     # print(f"Final event count: {counter}")
+#     if len(sys.argv) < 2:
+#         print("Usage: python view_npy_events.py path_to_npy_file.npy")
+#     else:
+#         view_events(sys.argv[1])
+
+
+
+if __name__ == "__main__":
+    run_range = [0,1,2]
+    counter = 0
+    for run in run_range:
+        print(f"\n--- Starting run {run} ---")
+        #counter = combine_h5(run, counter)
+        convert(run)
+    #print(f"Final event count: {counter}")
