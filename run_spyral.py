@@ -33,15 +33,15 @@ beam_events_folder = workspace_path / "beam_events"
 if not beam_events_folder.exists():
     beam_events_folder.mkdir()
 
-run_min = 101
-run_max = 169
-n_processes = 15
+run_min = 53
+run_max = 53
+n_processes = 2
 
 #########################################################################################################
 # Define configuration
 pad_params = PadParameters(
     pad_geometry_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_geometry_legacy.csv"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/pad_geometry_legacy.csv"
     ),
     pad_time_path=Path(
         "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_time_correction.csv"
@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [True, True, True, False],
+    [False, False, False, True],
     workspace_path,
     trace_path,
 )

@@ -448,8 +448,8 @@ class InterpSolverPhase(PhaseLike):
                 #need to define the edges here, because they change 
                 mm_tb: float = dv_df.get_column("micromegas_tb")[0]
                 w_tb: float = dv_df.get_column("window_tb")[0]
-                mm_err: float = dv_df.get_column("average_micromegas_tb_error")[0] #check if this needs to be outise or inside the loop
-                w_err: float = dv_df.get_column("average_window_tb_error")[0] #check if this needs to be outise or inside the loop
+                mm_err: float = dv_df.get_column("micromegas_err")[0] #check if this needs to be outise or inside the loop
+                w_err: float = dv_df.get_column("window_err")[0] #check if this needs to be outise or inside the loop
 
 
                 event_group = cluster_group[f"event_{event}"]
