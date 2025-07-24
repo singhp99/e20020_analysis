@@ -23,7 +23,7 @@ import multiprocessing
 
 #########################################################################################################
 # Set up workspace and trace paths
-workspace_path = Path("/Volumes/researchEXT/O16/O16_spyral_analysis")
+workspace_path = Path("/mnt/research/attpc/e20020/O16_spyral_analysis")
 trace_path = Path("/mnt/scratch/singhp19/O16_runs")
 
 # Make directory to store beam events
