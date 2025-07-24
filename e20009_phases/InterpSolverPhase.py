@@ -485,11 +485,11 @@ class InterpSolverPhase(PhaseLike):
                     phys_results,
                 )
 
-            # Write out the results
-            physics_df = pl.DataFrame(phys_results)
-            physics_df.write_parquet(result.artifact_path)
-            spyral_info(__name__, "Phase 4 complete.")
-            return result
+        # Write out the results
+        physics_df = pl.DataFrame(phys_results)
+        physics_df.write_parquet(result.artifact_path)
+        spyral_info(__name__, "Phase 4 complete.")
+        return result
 
 
 def solve_physics_interp(
