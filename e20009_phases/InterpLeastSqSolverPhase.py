@@ -53,7 +53,7 @@ Changes from attpc_spyral package base code (circa July 30, 2024):
       float when taking difference of two edges in z error.
 """
 
-DEFAULT_PID_XAXIS = "shifted_dEdx"
+DEFAULT_PID_XAXIS = "dEdx"
 DEFAULT_PID_YAXIS = "brho"
 
 
@@ -236,12 +236,12 @@ class InterpLeastSqSolverPhase(PhaseLike):
 
         # Check the cluster phase and estimate phase data
         cluster_path: Path = payload.metadata["cluster_path"]
-        estimate_path = f"/Volumes/researchEXT/O16/shifted_dedx/run_00{payload.run_number}.parquet" #changed this from payload.artifact_path
+        estimate_path = f"/Volumes/researchEXT/O16/dedx/run_00{payload.run_number}.parquet" #changed this from payload.artifact_path
         if not cluster_path.exists() or not estimate_path.exists():
             msg_queue.put(StatusMessage("Waiting", 0, 0, payload.run_number))
             spyral_warn(
                 __name__,
-                f"Either clusters or esitmates do not exist for run {payload.run_number} at phase 4. Skipping. Or check the shifted_dEdx file",
+                f"Either clusters or esitmates do not exist for run {payload.run_number} at phase 4. Skipping. Or check the dEdx file",
             )
             return PhaseResult.invalid_result(payload.run_number)
 

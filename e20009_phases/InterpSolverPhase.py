@@ -237,7 +237,7 @@ class InterpSolverPhase(PhaseLike):
 
         # Check the cluster phase and estimate phase data
         cluster_path: Path = payload.metadata["cluster_path"]
-        estimate_path = f"/Volumes/researchEXT/O16/shifted_dedx/run_00{payload.run_number}.parquet" #changed this from payload.artifact_path
+        estimate_path = payload.artifact_path
         if not cluster_path.exists() or not estimate_path.exists():
             msg_queue.put(StatusMessage("Waiting", 0, 0, payload.run_number))
             spyral_warn(
@@ -266,33 +266,33 @@ class InterpSolverPhase(PhaseLike):
             xaxis = pid.cut.get_x_axis()
             yaxis = pid.cut.get_y_axis()
 
-        # Retrieve gain-matching factor
-        gm_lf: pl.LazyFrame = pl.scan_csv(self.solver_params.gain_match_factors_path)
-        gm_df: pl.DataFrame = gm_lf.filter(
-            pl.col("run") == payload.run_number
-        ).collect()
-        if gm_df.shape[0] > 1:
-            spyral_error(
-                __name__,
-                f"Multiple gain match factors found for run {payload.run_number}, solving phase cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
-        elif gm_df.shape[0] == 0:
-            spyral_error(
-                __name__,
-                f"No gain match factor found for run {payload.run_number}, solving phase cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
-        gain_factor: float = gm_df.get_column("gain_factor")[0]
+        # # Retrieve gain-matching factor
+        # gm_lf: pl.LazyFrame = pl.scan_csv(self.solver_params.gain_match_factors_path)
+        # gm_df: pl.DataFrame = gm_lf.filter(
+        #     pl.col("run") == payload.run_number
+        # ).collect()
+        # if gm_df.shape[0] > 1:
+        #     spyral_error(
+        #         __name__,
+        #         f"Multiple gain match factors found for run {payload.run_number}, solving phase cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
+        # elif gm_df.shape[0] == 0:
+        #     spyral_error(
+        #         __name__,
+        #         f"No gain match factor found for run {payload.run_number}, solving phase cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
+        # gain_factor: float = gm_df.get_column("gain_factor")[0]
 
-        # Apply gain-matching factor to PID
+        # # Apply gain-matching factor to PID
         pid_vertices: list[tuple[float, float]] = list(pid.cut.get_vertices())
-        pid_vertices_matched: list[tuple[float, float]] = [
-            (point[0] / gain_factor, point[1]) for point in pid_vertices
-        ]
+        # pid_vertices_matched: list[tuple[float, float]] = [
+        #     (point[0] / gain_factor, point[1]) for point in pid_vertices
+        # ]
         pid.cut = Cut2D(
             pid.cut.name,
-            pid_vertices_matched,
+            pid_vertices,
             pid.cut.get_x_axis(),
             pid.cut.get_y_axis(),
         )
@@ -303,7 +303,7 @@ class InterpSolverPhase(PhaseLike):
         #     pl.col("run") == payload.run_number
         # ).collect()
 
-        dv_lf: pl.LazyFrame = pl.scan_parquet(self.det_params.drift_velocity_paminth)
+        dv_lf: pl.LazyFrame = pl.scan_parquet(self.det_params.drift_velocity_path)
         all_run_numbers = dv_lf.select("run_number").unique().collect()
 
         #copied from PpintcloudLegacyPhase
@@ -344,20 +344,23 @@ class InterpSolverPhase(PhaseLike):
         # w_err: float = 0
 
         # Select the particle group data, beam region of ic, convert to dictionary for row-wise operations
-        estimates_gated = estimate_df.filter(
+        estimates_gated = (estimate_df.filter(
             pl.struct([xaxis, yaxis]).map_batches(pid.cut.is_cols_inside)
-            & (pl.col("ic_multiplicity") == 1)
-            & (pl.col("ic_sca_multiplicity") == 1)
+            # & (pl.col("ic_multiplicity") == 1)
+            # & (pl.col("ic_sca_multiplicity") == 1)
         )
-        estimates_gated = (
-            estimates_gated.filter(
-                (pl.col("ic_amplitude") >= self.solver_params.ic_min_val)
-                & (pl.col("ic_amplitude") < self.solver_params.ic_max_val)
-                & (abs(pl.col("ic_centroid") - pl.col("ic_sca_centroid")) <= 10)
-            )
-            .collect()
-            .to_dict()
+        .collect()
+        .to_dict()
         )
+        # estimates_gated = (
+        #     estimates_gated.filter(
+        #         (pl.col("ic_amplitude") >= self.solver_params.ic_min_val)
+        #         & (pl.col("ic_amplitude") < self.solver_params.ic_max_val)
+        #         & (abs(pl.col("ic_centroid") - pl.col("ic_sca_centroid")) <= 10)
+        #     )
+        #     .collect()
+        #     .to_dict()
+        # )
 
         # # FOR SIMULATIONS
         # # Select the particle group data, beam region of ic, convert to dictionary for row-wise operations

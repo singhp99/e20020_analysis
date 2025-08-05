@@ -34,8 +34,8 @@ if not beam_events_folder.exists():
     beam_events_folder.mkdir()
 
 run_min = 53
-run_max = 53
-n_processes = 2
+run_max = 169
+n_processes = 10
 
 #########################################################################################################
 # Define configuration
@@ -110,7 +110,7 @@ solver_params = SolverParameters(
     gain_match_factors_path=Path(
         "/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/e20009_parameters/gain_match_factors.csv"
     ),
-    particle_id_filename=Path("/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/solver_gas_16O.json"),
+    particle_id_filename=Path("/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/solver_particle_16O.json"),
     ic_min_val=300.0,
     ic_max_val=850.0,
     n_time_steps=1300,
