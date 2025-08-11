@@ -142,7 +142,7 @@ def view_events(npy_file):
 
 
 if __name__ == "__main__":
-    run_range = [0,1,2]
+    run_range = [3,4,5]
     counter = 0
     for run in run_range:
         print(f"\n--- Starting run {run} ---")
