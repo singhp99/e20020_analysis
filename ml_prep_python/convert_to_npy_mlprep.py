@@ -6,26 +6,26 @@ from mpl_toolkits.mplot3d import Axes3D
 import sys
 
 def combine_h5(run_num, counter_idx):
-    file_3plus = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_spyral/PointcloudLegacy/run_000{run_num}.h5", "r")
+    file_3plus = h5py.File(f"/Volumes/researchEXT/spyral_eng/my_sim/output/kinematics/detector/resonan_more data/run_00{run_num}.h5", "r")
     groupn_3plus = list(file_3plus.keys())[0]
     group_cr_3plus = file_3plus[groupn_3plus]
     attributes_3plus = dict(group_cr_3plus.attrs)
     min_event_3plus = attributes_3plus["min_event"]
     max_event_3plus = attributes_3plus["max_event"]
 
-    file_12 = h5py.File(f"/Volumes/researchEXT/spyral_eng/my_sim/output/kinematics/detector/run_000{run_num}.h5", "r")
+    file_12 = h5py.File(f"/Volumes/researchEXT/spyral_eng/my_sim/output/kinematics/detector/gs_more data/run_00{run_num}.h5", "r")
     groupn_12 = list(file_12.keys())[0]
     group_cr_12 = file_12[groupn_12]
     attributes_12 = dict(group_cr_12.attrs)
     min_event_12 = attributes_12["min_event"]
     max_event_12 = attributes_12["max_event"]
 
-    output_path = f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_000{run_num}.h5"
+    output_path = f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_00{run_num}.h5"
     file_out = h5py.File(output_path, "w")
     group_out = file_out.create_group("cloud")
     group_out.attrs["min_event"] = counter_idx
 
-    output_label_path = f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_000{run_num}_labels.h5"
+    output_label_path = f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_00{run_num}_labels.h5"
     file_out_label = h5py.File(output_label_path, "w")
     group_label = file_out_label.create_group("label")
     group_label.attrs["min_event"] = counter_idx
@@ -68,8 +68,8 @@ def combine_h5(run_num, counter_idx):
     return counter_idx + 1
 
 def convert(run_num):
-    file = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_000{run_num}.h5", "r")
-    file_label = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_000{run_num}_labels.h5", "r")
+    file = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_00{run_num}.h5", "r")
+    file_label = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_00{run_num}_labels.h5", "r")
 
     groupn_cr = list(file.keys())[0]
     group_cr = file[groupn_cr]
@@ -85,7 +85,7 @@ def convert(run_num):
     for i, e in enumerate(group_cr):
         event_lengths[i] = len(group_cr[e])
 
-    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run000{run_num}_evtlen.npy", event_lengths)
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run00{run_num}_evtlen.npy", event_lengths)
 
     event_data = np.full((len(event_lengths), np.max(event_lengths) + 2, 4), np.nan)
 
@@ -96,7 +96,7 @@ def convert(run_num):
         event_data[i, -2] = [label] * 4
         event_data[i, -1] = [i] * 4
 
-    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run000{run_num}_data.npy", event_data)
+    np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run00{run_num}_data.npy", event_data)
 
 
 def view_events(npy_file):
@@ -142,9 +142,9 @@ def view_events(npy_file):
 
 
 if __name__ == "__main__":
-    run_range = [3,4,5]
-    counter = 0
-    for run in run_range:
+    #run_range = [3,4,5]
+    #counter = 0
+    for run in range(26,45):
         print(f"\n--- Starting run {run} ---")
         #counter = combine_h5(run, counter)
         convert(run)
