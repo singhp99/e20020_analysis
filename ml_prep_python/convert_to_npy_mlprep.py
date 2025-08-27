@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import sys
 
+"""
+This is to combine the pointclouds from different rections (tracks 1-2 from one and 3-5 from another)
+"""
 def combine_h5(run_num, counter_idx):
     file_3plus = h5py.File(f"/Volumes/researchEXT/spyral_eng/my_sim/output/kinematics/detector/resonan_more data/run_00{run_num}.h5", "r")
     groupn_3plus = list(file_3plus.keys())[0]
@@ -67,6 +70,9 @@ def combine_h5(run_num, counter_idx):
 
     return counter_idx + 1
 
+"""
+Converting the .h5 files to .npy for ml
+"""
 def convert(run_num):
     file = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_00{run_num}.h5", "r")
     file_label = h5py.File(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/run_00{run_num}_labels.h5", "r")
@@ -98,7 +104,9 @@ def convert(run_num):
 
     np.save(f"/Volumes/researchEXT/spyral_eng/engine_ml_prep/processed_data/run00{run_num}_data.npy", event_data)
 
-
+"""
+Viewing events to confirm the right labels
+"""
 def view_events(npy_file):
     data = np.load(npy_file)
 
