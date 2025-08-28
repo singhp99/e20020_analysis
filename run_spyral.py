@@ -23,8 +23,8 @@ import multiprocessing
 
 #########################################################################################################
 # Set up workspace and trace paths
-workspace_path = Path("/mnt/research/attpc/e20020/O16_spyral_analysis")
-trace_path = Path("/mnt/scratch/singhp19/O16_runs")
+workspace_path = Path("/Users/pranjalsingh/Desktop/research_space_spyral/single_drift_data")
+trace_path = Path("/Volumes/researchEXT/O16/O16_runs")
 
 # Make directory to store beam events
 if not workspace_path.exists():
@@ -33,8 +33,8 @@ beam_events_folder = workspace_path / "beam_events"
 if not beam_events_folder.exists():
     beam_events_folder.mkdir()
 
-run_min = 53
-run_max = 53
+run_min = 104
+run_max = 105
 n_processes = 2
 
 #########################################################################################################
@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [False, False, False, True],
+    [True, True, True, False],
     workspace_path,
     trace_path,
 )
