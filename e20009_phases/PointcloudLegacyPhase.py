@@ -221,7 +221,6 @@ class PointcloudLegacyPhase(PhaseLike):
         msg = StatusMessage(
             self.name, 1, total, payload.run_number
         )  # We always increment by 1
-        counter = 0 #to count the total numnber of events I have for double checking
         # Process the data
         for idx in range(min_event, max_event): #drift velocity moved in here max_event + 1
             count += 1
