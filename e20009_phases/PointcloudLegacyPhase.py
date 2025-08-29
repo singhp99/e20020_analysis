@@ -222,7 +222,7 @@ class PointcloudLegacyPhase(PhaseLike):
             self.name, 1, total, payload.run_number
         )  # We always increment by 1
         # Process the data
-        for idx in range(min_event, max_event): #drift velocity moved in here max_event + 1
+        for idx in range(min_event, max_event+1): #drift velocity moved in here max_event + 1
             count += 1
             if count > flush_val:
                 count = 0
