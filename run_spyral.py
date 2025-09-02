@@ -35,7 +35,7 @@ if not beam_events_folder.exists():
 
 run_min = 53
 run_max = 170
-n_processes = 15
+n_processes = 17
 
 #########################################################################################################
 # Define configuration
@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [True, True, True, False],
+    [False, False, False, True],
     workspace_path,
     trace_path,
 )
