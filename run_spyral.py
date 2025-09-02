@@ -105,7 +105,7 @@ estimate_params = EstimateParameters(
 # Protons
 solver_params = SolverParameters(
     gas_data_path=Path(
-        "./mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/solver_gas_16O.json"
+        "/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/solver_gas_16O.json"
     ),
     gain_match_factors_path=Path(
         "/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/e20009_parameters/gain_match_factors.csv"
