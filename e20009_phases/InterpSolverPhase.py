@@ -237,7 +237,7 @@ class InterpSolverPhase(PhaseLike):
 
         # Check the cluster phase and estimate phase data
         cluster_path: Path = payload.metadata["cluster_path"]
-        estimate_path = f"/Volumes/researchEXT/O16/shifted_dedx/run_00{payload.run_number}.parquet" #changed this from payload.artifact_path
+        estimate_path = payload.artifact_path
         if not cluster_path.exists() or not estimate_path.exists():
             msg_queue.put(StatusMessage("Waiting", 0, 0, payload.run_number))
             spyral_warn(
@@ -266,33 +266,33 @@ class InterpSolverPhase(PhaseLike):
             xaxis = pid.cut.get_x_axis()
             yaxis = pid.cut.get_y_axis()
 
-        # Retrieve gain-matching factor
-        gm_lf: pl.LazyFrame = pl.scan_csv(self.solver_params.gain_match_factors_path)
-        gm_df: pl.DataFrame = gm_lf.filter(
-            pl.col("run") == payload.run_number
-        ).collect()
-        if gm_df.shape[0] > 1:
-            spyral_error(
-                __name__,
-                f"Multiple gain match factors found for run {payload.run_number}, solving phase cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
-        elif gm_df.shape[0] == 0:
-            spyral_error(
-                __name__,
-                f"No gain match factor found for run {payload.run_number}, solving phase cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
-        gain_factor: float = gm_df.get_column("gain_factor")[0]
+        # # Retrieve gain-matching factor
+        # gm_lf: pl.LazyFrame = pl.scan_csv(self.solver_params.gain_match_factors_path)
+        # gm_df: pl.DataFrame = gm_lf.filter(
+        #     pl.col("run") == payload.run_number
+        # ).collect()
+        # if gm_df.shape[0] > 1:
+        #     spyral_error(
+        #         __name__,
+        #         f"Multiple gain match factors found for run {payload.run_number}, solving phase cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
+        # elif gm_df.shape[0] == 0:
+        #     spyral_error(
+        #         __name__,
+        #         f"No gain match factor found for run {payload.run_number}, solving phase cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
+        # gain_factor: float = gm_df.get_column("gain_factor")[0]
 
-        # Apply gain-matching factor to PID
+        # # Apply gain-matching factor to PID
         pid_vertices: list[tuple[float, float]] = list(pid.cut.get_vertices())
-        pid_vertices_matched: list[tuple[float, float]] = [
-            (point[0] / gain_factor, point[1]) for point in pid_vertices
-        ]
+        # pid_vertices_matched: list[tuple[float, float]] = [
+        #     (point[0] / gain_factor, point[1]) for point in pid_vertices
+        # ]
         pid.cut = Cut2D(
             pid.cut.name,
-            pid_vertices_matched,
+            pid_vertices,
             pid.cut.get_x_axis(),
             pid.cut.get_y_axis(),
         )
@@ -303,18 +303,18 @@ class InterpSolverPhase(PhaseLike):
         #     pl.col("run") == payload.run_number
         # ).collect()
 
-        dv_lf: pl.LazyFrame = pl.scan_parquet(self.det_params.drift_velocity_paminth)
-        all_run_numbers = dv_lf.select("run_number").unique().collect()
+        # dv_lf: pl.LazyFrame = pl.scan_parquet(self.det_params.drift_velocity_path)
+        # all_run_numbers = dv_lf.select("run_number").unique().collect()
 
-        #copied from PpintcloudLegacyPhase
-        run_numbers_list = all_run_numbers["run_number"].to_list()
+        # #copied from PpintcloudLegacyPhase
+        # run_numbers_list = all_run_numbers["run_number"].to_list()
 
-        if payload.run_number not in run_numbers_list:
-            spyral_error(
-                __name__,
-                f"No drift velocity found for run {payload.run_number}, phase 1 cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
+        # if payload.run_number not in run_numbers_list:
+        #     spyral_error(
+        #         __name__,
+        #         f"No drift velocity found for run {payload.run_number}, phase 1 cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
         # dv_df: pl.DataFrame = dv_lf.filter(
         #     pl.col("run_number") == payload.run_number
         #     ).collect()
@@ -338,26 +338,29 @@ class InterpSolverPhase(PhaseLike):
         # w_err: float = dv_df.get_column("average_window_tb_error")[0]
 
         # # FOR SIMULATIONS
-        # mm_tb: float = 62
-        # w_tb: float = 396
-        # mm_err: float = 0
-        # w_err: float = 0
+        mm_tb: float = 82.0
+        w_tb: float = 454.0
+        mm_err: float = 0
+        w_err: float = 0
 
         # Select the particle group data, beam region of ic, convert to dictionary for row-wise operations
-        estimates_gated = estimate_df.filter(
+        estimates_gated = (estimate_df.filter(
             pl.struct([xaxis, yaxis]).map_batches(pid.cut.is_cols_inside)
-            & (pl.col("ic_multiplicity") == 1)
-            & (pl.col("ic_sca_multiplicity") == 1)
+            # & (pl.col("ic_multiplicity") == 1)
+            # & (pl.col("ic_sca_multiplicity") == 1)
         )
-        estimates_gated = (
-            estimates_gated.filter(
-                (pl.col("ic_amplitude") >= self.solver_params.ic_min_val)
-                & (pl.col("ic_amplitude") < self.solver_params.ic_max_val)
-                & (abs(pl.col("ic_centroid") - pl.col("ic_sca_centroid")) <= 10)
-            )
-            .collect()
-            .to_dict()
+        .collect()
+        .to_dict()
         )
+        # estimates_gated = (
+        #     estimates_gated.filter(
+        #         (pl.col("ic_amplitude") >= self.solver_params.ic_min_val)
+        #         & (pl.col("ic_amplitude") < self.solver_params.ic_max_val)
+        #         & (abs(pl.col("ic_centroid") - pl.col("ic_sca_centroid")) <= 10)
+        #     )
+        #     .collect()
+        #     .to_dict()
+        # )
 
         # # FOR SIMULATIONS
         # # Select the particle group data, beam region of ic, convert to dictionary for row-wise operations
@@ -433,57 +436,52 @@ class InterpSolverPhase(PhaseLike):
                 count = 0
                 msg_queue.put(msg)
 
-            dv_df: pl.DataFrame = dv_lf.filter(
-            (pl.col("run_number") == payload.run_number) & (pl.col("event_number") == event)).collect()
-            if dv_df.shape[0] == 0:
-                continue
-            elif dv_df.shape[0] > 1:
-                spyral_error(
-                    __name__,
-                    f"Multiple drift velocities found for run {payload.run_number} and event {event}, phase 1 cannot be run!",
-                )
-                return PhaseResult.invalid_result(payload.run_number)
+            # dv_df: pl.DataFrame = dv_lf.filter(
+            # (pl.col("run_number") == payload.run_number) & (pl.col("event_number") == event)).collect()
+            # if dv_df.shape[0] == 0:
+            #     continue
+            # elif dv_df.shape[0] > 1:
+            #     spyral_error(
+            #         __name__,
+            #         f"Multiple drift velocities found for run {payload.run_number} and event {event}, phase 1 cannot be run!",
+            #     )
+            #     return PhaseResult.invalid_result(payload.run_number)
             
-            else:
-                #need to define the edges here, because they change 
-                mm_tb: float = dv_df.get_column("micromegas_tb")[0]
-                w_tb: float = dv_df.get_column("window_tb")[0]
-                mm_err: float = dv_df.get_column("micromegas_err")[0] #check if this needs to be outise or inside the loop
-                w_err: float = dv_df.get_column("window_err")[0] #check if this needs to be outise or inside the loop
+            
+            #need to define the edges here, because they change 
 
+            event_group = cluster_group[f"event_{event}"]
+            cidx = estimates_gated["cluster_index"][row]
+            local_cluster: h5.Dataset = event_group[f"cluster_{cidx}"]  # type: ignore
+            cluster = Cluster(
+                event, local_cluster.attrs["label"], local_cluster["cloud"][:].copy()  # type: ignore
+            )
 
-                event_group = cluster_group[f"event_{event}"]
-                cidx = estimates_gated["cluster_index"][row]
-                local_cluster: h5.Dataset = event_group[f"cluster_{cidx}"]  # type: ignore
-                cluster = Cluster(
-                    event, local_cluster.attrs["label"], local_cluster["cloud"][:].copy()  # type: ignore
-                )
-
-                # Do the solver
-                guess = Guess(
-                    estimates_gated["polar"][row],
-                    estimates_gated["azimuthal"][row],
-                    estimates_gated["brho"][row],
-                    estimates_gated["vertex_x"][row],
-                    estimates_gated["vertex_y"][row],
-                    estimates_gated["vertex_z"][row],
-                    Direction.NONE,  # type: ignore
-                )
-                solve_physics_interp(
-                    payload.run_number,
-                    event,
-                    cidx,
-                    cluster,
-                    guess,
-                    pid.nucleus,
-                    interpolator,
-                    self.det_params,
-                    w_tb,
-                    mm_tb,
-                    w_err,
-                    mm_err,
-                    phys_results,
-                )
+            # Do the solver
+            guess = Guess(
+                estimates_gated["polar"][row],
+                estimates_gated["azimuthal"][row],
+                estimates_gated["brho"][row],
+                estimates_gated["vertex_x"][row],
+                estimates_gated["vertex_y"][row],
+                estimates_gated["vertex_z"][row],
+                Direction.NONE,  # type: ignore
+            )
+            solve_physics_interp(
+                payload.run_number,
+                event,
+                cidx,
+                cluster,
+                guess,
+                pid.nucleus,
+                interpolator,
+                self.det_params,
+                w_tb,
+                mm_tb,
+                w_err,
+                mm_err,
+                phys_results,
+            )
 
         # Write out the results
         physics_df = pl.DataFrame(phys_results)
