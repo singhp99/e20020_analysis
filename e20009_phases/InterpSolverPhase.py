@@ -237,7 +237,7 @@ class InterpSolverPhase(PhaseLike):
 
         # Check the cluster phase and estimate phase data
         cluster_path: Path = payload.metadata["cluster_path"]
-        estimate_path = payload.artifact_path
+        estimate_path = f"/Volumes/researchEXT/O16/shifted_dedx/run_00{payload.run_number}.parquet" #changed this from payload.artifact_path
         if not cluster_path.exists() or not estimate_path.exists():
             msg_queue.put(StatusMessage("Waiting", 0, 0, payload.run_number))
             spyral_warn(
@@ -298,26 +298,44 @@ class InterpSolverPhase(PhaseLike):
         )
 
         # Load drift velocity information
-        dv_lf: pl.LazyFrame = pl.scan_csv(self.det_params.drift_velocity_path)
-        dv_df: pl.DataFrame = dv_lf.filter(
-            pl.col("run") == payload.run_number
-        ).collect()
-        if dv_df.shape[0] > 1:
+        # dv_lf: pl.LazyFrame = pl.scan_csv(self.det_params.drift_velocity_path)
+        # dv_df: pl.DataFrame = dv_lf.filter(
+        #     pl.col("run") == payload.run_number
+        # ).collect()
+
+        dv_lf: pl.LazyFrame = pl.scan_parquet(self.det_params.drift_velocity_paminth)
+        all_run_numbers = dv_lf.select("run_number").unique().collect()
+
+        #copied from PpintcloudLegacyPhase
+        run_numbers_list = all_run_numbers["run_number"].to_list()
+
+        if payload.run_number not in run_numbers_list:
             spyral_error(
                 __name__,
-                f"Multiple drift velocities found for run {payload.run_number}, interpolation solver cannot be run!",
+                f"No drift velocity found for run {payload.run_number}, phase 1 cannot be run!",
             )
             return PhaseResult.invalid_result(payload.run_number)
-        elif dv_df.shape[0] == 0:
-            spyral_error(
-                __name__,
-                f"No drift velocity found for run {payload.run_number}, interpolation solver cannot be run!",
-            )
-            return PhaseResult.invalid_result(payload.run_number)
-        mm_tb: float = dv_df.get_column("average_micromegas_tb")[0]
-        w_tb: float = dv_df.get_column("average_window_tb")[0]
-        mm_err: float = dv_df.get_column("average_micromegas_tb_error")[0]
-        w_err: float = dv_df.get_column("average_window_tb_error")[0]
+        # dv_df: pl.DataFrame = dv_lf.filter(
+        #     pl.col("run_number") == payload.run_number
+        #     ).collect()
+        
+        # if dv_df.shape[0] > 1:
+        #     spyral_error(
+        #         __name__,
+        #         f"Multiple drift velocities found for run {payload.run_number}, interpolation solver cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
+        # elif dv_df.shape[0] == 0:
+        #     spyral_error(
+        #         __name__,
+        #         f"No drift velocity found for run {payload.run_number}, interpolation solver cannot be run!",
+        #     )
+        #     return PhaseResult.invalid_result(payload.run_number)
+        
+        # mm_tb: float = dv_df.get_column("average_micromegas_tb")[0]
+        # w_tb: float = dv_df.get_column("average_window_tb")[0]
+        # mm_err: float = dv_df.get_column("average_micromegas_tb_error")[0]
+        # w_err: float = dv_df.get_column("average_window_tb_error")[0]
 
         # # FOR SIMULATIONS
         # mm_tb: float = 62
@@ -408,45 +426,64 @@ class InterpSolverPhase(PhaseLike):
         # Create our interpolator
         interpolator = create_interpolator_from_array(self.track_path, mesh_handle)
 
-        # Process the data
+        # Process the data (I think this is where it goes through each event)
         for row, event in enumerate(estimates_gated["event"]):
             count += 1
             if count > flush_val:
                 count = 0
                 msg_queue.put(msg)
 
-            event_group = cluster_group[f"event_{event}"]
-            cidx = estimates_gated["cluster_index"][row]
-            local_cluster: h5.Dataset = event_group[f"cluster_{cidx}"]  # type: ignore
-            cluster = Cluster(
-                event, local_cluster.attrs["label"], local_cluster["cloud"][:].copy()  # type: ignore
-            )
+            dv_df: pl.DataFrame = dv_lf.filter(
+            (pl.col("run_number") == payload.run_number) & (pl.col("event_number") == event)).collect()
+            if dv_df.shape[0] == 0:
+                continue
+            elif dv_df.shape[0] > 1:
+                spyral_error(
+                    __name__,
+                    f"Multiple drift velocities found for run {payload.run_number} and event {event}, phase 1 cannot be run!",
+                )
+                return PhaseResult.invalid_result(payload.run_number)
+            
+            else:
+                #need to define the edges here, because they change 
+                mm_tb: float = dv_df.get_column("micromegas_tb")[0]
+                w_tb: float = dv_df.get_column("window_tb")[0]
+                mm_err: float = dv_df.get_column("micromegas_err")[0] #check if this needs to be outise or inside the loop
+                w_err: float = dv_df.get_column("window_err")[0] #check if this needs to be outise or inside the loop
 
-            # Do the solver
-            guess = Guess(
-                estimates_gated["polar"][row],
-                estimates_gated["azimuthal"][row],
-                estimates_gated["brho"][row],
-                estimates_gated["vertex_x"][row],
-                estimates_gated["vertex_y"][row],
-                estimates_gated["vertex_z"][row],
-                Direction.NONE,  # type: ignore
-            )
-            solve_physics_interp(
-                payload.run_number,
-                event,
-                cidx,
-                cluster,
-                guess,
-                pid.nucleus,
-                interpolator,
-                self.det_params,
-                w_tb,
-                mm_tb,
-                w_err,
-                mm_err,
-                phys_results,
-            )
+
+                event_group = cluster_group[f"event_{event}"]
+                cidx = estimates_gated["cluster_index"][row]
+                local_cluster: h5.Dataset = event_group[f"cluster_{cidx}"]  # type: ignore
+                cluster = Cluster(
+                    event, local_cluster.attrs["label"], local_cluster["cloud"][:].copy()  # type: ignore
+                )
+
+                # Do the solver
+                guess = Guess(
+                    estimates_gated["polar"][row],
+                    estimates_gated["azimuthal"][row],
+                    estimates_gated["brho"][row],
+                    estimates_gated["vertex_x"][row],
+                    estimates_gated["vertex_y"][row],
+                    estimates_gated["vertex_z"][row],
+                    Direction.NONE,  # type: ignore
+                )
+                solve_physics_interp(
+                    payload.run_number,
+                    event,
+                    cidx,
+                    cluster,
+                    guess,
+                    pid.nucleus,
+                    interpolator,
+                    self.det_params,
+                    w_tb,
+                    mm_tb,
+                    w_err,
+                    mm_err,
+                    phys_results,
+                )
 
         # Write out the results
         physics_df = pl.DataFrame(phys_results)

@@ -33,24 +33,24 @@ beam_events_folder = workspace_path / "beam_events"
 if not beam_events_folder.exists():
     beam_events_folder.mkdir()
 
-run_min = 101
-run_max = 169
-n_processes = 15
+run_min = 53
+run_max = 53
+n_processes = 2
 
 #########################################################################################################
 # Define configuration
 pad_params = PadParameters(
     pad_geometry_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_geometry_legacy.csv"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/pad_geometry_legacy.csv"
     ),
     pad_time_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_time_correction.csv"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/pad_time_correction.csv"
     ),
     pad_electronics_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_electronics_legacy.csv"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/pad_electronics_legacy.csv"
     ),
     pad_scale_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/pad_scale.csv"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/pad_scale.csv"
     ),
 )
 
@@ -78,11 +78,11 @@ det_params = DetectorParameters(
     detector_length=1000.0,
     beam_region_radius=20.0,
     drift_velocity_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/drift_vel_calc/all_drift_vel.parquet"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/all_drift_vel_with_sem.parquet"
     ),
     get_frequency=3.125,
     garfield_file_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/e20009_efield_correction.txt"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/e20009_efield_correction.txt"
     ),
     do_garfield_correction=True,
 )
@@ -105,12 +105,12 @@ estimate_params = EstimateParameters(
 # Protons
 solver_params = SolverParameters(
     gas_data_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/solver_particle_16O.json"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/solver_gas_16O.json"
     ),
     gain_match_factors_path=Path(
-        "/mnt/home/singhp19/O16_driftvel_analysis/e20009_analysis_O16/e20009_parameters/gain_match_factors.csv"
+        "/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/e20009_parameters/gain_match_factors.csv"
     ),
-    particle_id_filename=Path("/Users/mahesh/Desktop/academics/research/e20009_analysis/solver_particle_16O.json"),
+    particle_id_filename=Path("/Users/pranjalsingh/Desktop/research_space_spyral/e20020_analysis/solver_particle_16O.json"),
     ic_min_val=300.0,
     ic_max_val=850.0,
     n_time_steps=1300,
@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [True, True, True, False],
+    [False, False, False, True],
     workspace_path,
     trace_path,
 )
