@@ -1,0 +1,103 @@
+run number,run class,title,start date/time,stop date/time,config name,Cathode voltage,Mesh,ETrans,THGEM,Ring,Pressure,Field,Comments,SmartZAP voltage
+53,PROD,Trigger on reactions,5/26/21 22:59,5/26/21 23:24,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+54,PROD,Trigger on reactions,5/26/21 23:35,5/27/21 0:21,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+55,PROD,Trigger on reactions,5/27/21 0:22,5/27/21 1:38,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+56,PROD,Trigger on reactions,5/27/21 1:58,5/27/21 2:50,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+57,PROD,Trigger on reactions,5/27/21 2:50,5/27/21 3:45,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+58,PROD,Trigger on reactions,5/27/21 3:45,5/27/21 4:54,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+59,PROD,Trigger on reactions,5/27/21 4:55,5/27/21 5:58,e20020,58,140,50,200,100,699,3.03,Trigger rate about 30/s,70
+60,PROD,Trigger on reactions,5/27/21 5:59,53:34.6,e20020,58,140,50,200,100,699,3.03,Trigger rate about 30/s,70
+61,PROD,Trigger on reactions,5/27/21 6:54,56:29.2,e20020,58,140,50,200,100,699,3.03,Trigger rate about 30/s,70
+62,PROD,Trigger on reactions,5/27/21 7:56,02:27.7,e20020,58,140,50,200,100,699,3.03,Trigger rate about 30/s,70
+63,PROD,Trigger on reactions,5/27/21 9:02,5/27/21 9:53,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+64,PROD,Trigger on reactions,5/27/21 9:53,5/27/21 10:59,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+65,PROD,Trigger on reactions,5/27/21 11:00,5/27/21 12:00,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+66,PROD,Trigger on reactions,5/27/21 12:00,5/27/21 12:59,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+67,PROD,Trigger on reactions,5/27/21 13:13,5/27/21 14:13,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+68,PROD,Trigger on reactions,5/27/21 14:13,5/27/21 14:29,e20020,58,140,50,200,100,699,3.03,Trigger rate about 40/s,70
+70,PROD,Test after Mutant configuration,5/27/21 14:33,5/27/21 15:34,e20020,58,140,50,200,100,699,3.03,around 40/s,70
+71,PROD,Test after Mutant configuration,5/27/21 15:38,5/27/21 16:40,e20020,58,140,50,200,100,699,3.03,around 40/s,70
+72,PROD,Test after Mutant configuration,5/27/21 16:40,5/27/21 17:42,e20020,58,140,50,200,100,699,3.03,around 40/s,70
+73,PROD,Test after Mutant configuration,5/27/21 17:43,56:15.3,e20020,58,140,50,200,100,699,3.03,around 40/s,70
+74,PROD,Test after Mutant configuration,5/27/21 18:56,5/27/21 19:20,e20020,58,140,50,200,100,699,3.03,around 40/s,70
+77,PROD,Reaction trigger after change of trigger electronics,5/28/21 0:28,34:23.2,e20020,58,140,50,190,100,698,3.03685,"Changed preamp, shaper and TSCA and set trigger threshold to 400 mV. Signal from beam is about 5 V.",80
+83,PROD,,5/28/21 3:17,20:40.6,e20020,58,140,50,180,100,698,3.03685,reduced HV on Thgem,40
+84,PROD,Trigger on reactions,5/28/21 4:20,5/28/21 5:22,e20020,58,140,50,180,100,698,3.03685,reduced HV on Thgem,40
+85,PROD,Trigger on reactions,5/28/21 5:24,5/28/21 6:24,e20020,58,140,50,180,100,698,3.03685,reduced HV on Thgem,40
+86,PROD,Trigger on reactions,5/28/21 6:25,5/28/21 7:22,e20020,58,140,50,180,100,698,3.03685,reduced HV on Thgem,40
+87,PROD,Trigger on reactions,5/28/21 7:22,25:11.2,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s,40
+88,PROD,Trigger on reactions,5/28/21 8:25,27:53.0,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s,40
+89,PROD,Trigger on reactions,5/28/21 9:28,31:59.5,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s,40
+90,PROD,Trigger on reactions,5/28/21 10:32,46:35.9,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s,40
+91,PROD,Trigger on reactions,5/28/21 11:47,49:13.7,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s,40
+92,PROD,Trigger on reactions,5/28/21 12:50,5/28/21 13:21,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s - lost beam at 9:07 because of crane movement - only background after,40
+94,PROD,Trigger on reactions,5/28/21 13:35,5/28/21 14:26,e20020,58,140,50,180,100,698,3.03685,count rate ~15/s,40
+96,PROD,Trigger on reactions,5/28/21 15:16,21:20.9,e20020,58,140,50,180,100,698,3.03685,Rate ~15cps begin - 25cps @ 11:54,40
+97,PROD,Trigger on reactions,5/28/21 16:21,54:44.3,e20020,58,140,50,180,100,698,3.03685,Rate ~25 cps @ 12:22,40
+98,PROD,Trigger on reactions,5/28/21 17:05,06:31.1,e20020,58,140,50,175,100,698,3.03685,Rate ~20 cps @ 13:06 - lowered th-GEM to 175,40
+99,PROD,Trigger on reactions,5/28/21 18:08,36:15.5,e20020,58,140,50,175,100,698,3.03685,Rate ~35cps @ 14:10,40
+100,PROD,Trigger on reactions,5/28/21 18:36,50:15.8,e20020,58,140,50,175,100,698,3.03685,Rate ~35cps @ 14:10,40
+101,PROD,Trigger on reactions,5/28/21 18:50,5/28/21 19:44,e20020,58,140,50,175,100,698,3.03685,Rate ~30cps @ 14:50,40
+102,PROD,Trigger on reactions,5/28/21 19:45,5/28/21 20:47,e20020,58,140,50,175,100,698,3.03685,Rate ~30cps @ 15:44,40
+103,PROD,Trigger on reactions,5/28/21 20:47,5/28/21 21:52,e20020,58,140,50,175,100,698,3.03685,Rate ~30cps @ 5PM,40
+104,PROD,Trigger on reactions,5/28/21 21:53,5/28/21 22:55,e20020,58,140,50,175,100,698,3.03685,Rate ~20cps @ 6:55PM,40
+105,PROD,Trigger on reactions,5/28/21 22:56,5/28/21 23:03,e20020,58,140,50,175,100,698,3.03685,Rate ~13 cps @ 7:15PM,40
+106,PROD,Trigger on reactions,5/28/21 23:04,5/29/21 0:04,e20020,58,140,50,175,100,698,3.03685,Rate ~15 cps @ 8:00PM,40
+108,PROD,Trigger on reactions,5/29/21 0:08,5/29/21 1:02,e20020,58,140,50,175,100,698,3.03685,rate 15 Hz @9:00 PM,40
+109,PROD,Trigger on reactions,5/29/21 1:02,5/29/21 1:27,e20020,58,140,50,175,100,698,3.03685,"rate 15 Hz @9:00 PM, stopped writing so had to stop the run",40
+110,PROD,Trigger on reactions,5/29/21 1:28,5/29/21 2:32,e20020,58,140,50,175,100,698,3.03685,rate 20 Hz @9:30 PM,40
+111,PROD,Trigger on reactions,5/29/21 2:33,5/29/21 3:33,e20020,58,140,50,175,100,698,3.03685,rate 20 Hz @9:30 PM,40
+112,PROD,Trigger on reactions,5/29/21 3:35,36:31.8,e20020,58,140,50,175,100,698,3.03685,rate 15 Hz @ 00:00,40
+113,PROD,Trigger on reactions,5/29/21 4:37,37:13.0,e20020,58,140,50,175,100,698,3.03685,rate 15 Hz @ 00:36,40
+114,PROD,Trigger on reactions,5/29/21 5:37,5/29/21 6:22,e20020,58,140,50,175,100,698,3.03685,rate 15 Hz @ 01:38 - stopped because high trigger rate at end of run,40
+116,PROD,Trigger on reactions,5/29/21 10:25,26:49.8,e20020,58,140,50,180,100,698,3.03685,rate 15 Hz @ 06:35,90
+117,PROD,Trigger on reactions,5/29/21 11:28,30:37.0,e20020,58,140,50,180,100,698,3.03685,rate 15 Hz @ 07:30,90
+118,PROD,Trigger on reactions,5/29/21 12:31,5/29/21 13:29,e20020,58,140,50,180,100,698,3.03685,,90
+119,PROD,Trigger on reactions,5/29/21 13:29,5/29/21 13:39,e20020,58,140,50,180,100,698,3.03685,,90
+120,PROD,Trigger on reactions,5/29/21 13:42,5/29/21 14:40,e20020,58,140,50,180,100,698,3.03685,,90
+121,PROD,Trigger on reactions,5/29/21 14:41,5/29/21 15:30,e20020,58,140,50,180,100,698,3.03685,,90
+122,PROD,Trigger on reactions,5/29/21 15:30,5/29/21 16:26,e20020,58,140,50,180,100,698,3.03685,,90
+123,PROD,Trigger on reactions,5/29/21 16:27,5/29/21 16:37,e20020,58,140,50,180,100,698,3.03685,,90
+124,PROD,Trigger on reactions,5/29/21 16:38,5/29/21 17:27,e20020,58,140,50,180,100,698,3.03685,,90
+125,PROD,Trigger on reactions,5/29/21 17:28,5/29/21 18:30,e20020,58,140,50,180,100,698,3.03685,,90
+126,PROD,Trigger on reactions,5/29/21 18:30,5/29/21 18:57,e20020,58,140,50,180,100,698,3.03685,,90
+127,PROD,Trigger on reactions,5/29/21 18:58,5/29/21 20:02,e20020,58,140,50,180,100,698,3.03685,,90
+128,PROD,Trigger on reactions,5/29/21 20:02,29:31.3,e20020,58,140,50,180,100,698,3.03685,,90
+129,PROD,Trigger on reactions,5/29/21 20:29,34:37.9,e20020,58,140,50,180,100,698,3.03685,,90
+130,PROD,Trigger on reactions,5/29/21 21:35,36:19.3,e20020,58,140,50,180,100,698,3.03685,Rate 15 Hz @ 17:37,90
+131,PROD,Trigger on reactions,5/29/21 22:36,5/29/21 22:42,e20020,58,140,50,180,100,698,3.03685,,90
+132,PROD,Trigger on reactions,5/29/21 22:47,5/29/21 23:50,e20020,58,140,50,180,100,698,3.03685,,90
+133,PROD,Trigger on reactions,5/29/21 23:51,5/30/21 0:53,e20020,58,140,50,180,100,698,3.03685,,90
+134,PROD,Trigger on reactions,5/30/21 0:55,5/30/21 1:55,e20020,58,140,50,180,100,698,3.03685,,90
+135,PROD,Trigger on reactions,5/30/21 1:56,5/30/21 2:57,e20020,58,140,50,180,100,698,3.03685,,90
+136,PROD,Trigger on reactions,5/30/21 2:57,07:25.4,e20020,58,140,50,180,100,698,3.03685,,90
+137,PROD,Trigger on reactions,5/30/21 4:08,17:39.2,e20020,58,140,50,180,100,698,3.03685,count rate~15/s @ 00:09,90
+139,PROD,Trigger on reactions,5/30/21 5:20,20:23.5,e20020,58,140,50,180,100,698,3.03685,Count rate ~15/s @ 01:21,90
+140,PROD,Trigger on reactions,5/30/21 6:20,29:31.2,e20020,58,140,50,180,100,698,3.03685,Count rate ~20/s @02:21,90
+141,PROD,Trigger on reactions,5/30/21 7:30,30:37.3,e20020,58,140,50,180,100,698,3.03685,Count rate ~15/s @03:56,90
+142,PROD,Trigger on reactions,5/30/21 8:30,33:04.1,e20020,58,140,50,180,100,698,3.03685,Count rate ~15/s @04:31,90
+143,PROD,Trigger on reactions,5/30/21 9:33,34:03.9,e20020,58,140,50,180,100,698,3.03685,Count rate ~15/s @05:33,90
+144,PROD,Trigger on reactions,5/30/21 10:34,35:16.1,e20020,58,140,50,180,100,698,3.03685,Count rate ~15/s @06:35,90
+145,PROD,Trigger on reactions,5/30/21 11:35,36:32.0,e20020,58,140,50,180,100,698,3.03685,Count rate ~15/s @ 07:36,90
+146,PROD,Trigger on reactions,5/30/21 12:37,38:07.4,e20020,58,140,50,180,100,698,3.03685,Count rate ~20/s @ 08:37,90
+148,PROD,Trigger on reactions,5/30/21 13:41,5/30/21 14:19,e20020,58,140,50,180,100,698,3.03685,,90
+150,PROD,Trigger on reactions,5/30/21 15:14,5/30/21 16:14,e20020,58,140,50,180,100,698,3.03685,Count rate is 15 cps @ 11:17,90
+151,PROD,Trigger on reactions,5/30/21 16:16,5/30/21 17:14,e20020,58,140,50,180,100,698,3.03685,Count rate is 15 cps @ 12:17,90
+152,PROD,Trigger on reactions,5/30/21 17:15,5/30/21 18:14,e20020,58,140,50,180,100,698,3.03685,Count rate is 15 cps @ 13:15,90
+153,PROD,Trigger on reactions,5/30/21 18:15,5/30/21 19:15,e20020,58,140,50,180,100,698,3.03685,Count rate is 15 cps @ 15:15,90
+154,PROD,Trigger on reactions,5/30/21 19:15,5/30/21 20:16,e20020,58,140,50,180,100,698,3.03685,,90
+155,PROD,Trigger on reactions,5/30/21 20:18,5/30/21 21:30,e20020,58,140,50,180,100,698,3.03685,,90
+156,PROD,Trigger on reactions,5/30/21 21:31,5/30/21 22:35,e20020,58,140,50,180,100,698,3.03685,,90
+157,PROD,Trigger on reactions,5/30/21 22:35,5/30/21 23:36,e20020,58,140,50,180,100,698,3.03685,,90
+158,PROD,Trigger on reactions,5/30/21 23:37,5/31/21 0:51,e20020,58,140,50,180,100,698,3.03685,,90
+159,PROD,Trigger on reactions,5/31/21 0:52,5/31/21 1:51,e20020,58,140,50,180,100,698,3.03685,,90
+160,PROD,Trigger on reactions,5/31/21 1:52,5/31/21 2:55,e20020,58,140,50,180,100,698,3.03685,,90
+161,PROD,Trigger on reactions,5/31/21 2:56,5/31/21 3:28,e20020,58,140,50,180,100,698,3.03685,,90
+162,PROD,Trigger on reactions,5/31/21 3:31,38:58.3,e20020,58,140,50,180,100,698,3.03685,Count rate 15/s @ 23:56,90
+163,PROD,Trigger on reactions,5/31/21 4:39,55:41.2,e20020,58,140,50,180,100,698,3.03685,Count rate 15/s @ 00:41,90
+164,PROD,Trigger on reactions,5/31/21 5:56,56:33.3,e20020,58,140,50,180,100,698,3.03685,Count rate 15/s @ 00:41,90
+165,PROD,Trigger on reactions,5/31/21 6:57,11:35.4,e20020,58,140,50,180,100,698,3.03685,Count rate 15/s @ 00:41,90
+166,PROD,Trigger on reactions,5/31/21 8:12,13:49.2,e20020,58,140,50,180,100,698,3.03685,Count rate 17/s @ 04:13,90
+167,PROD,Trigger on reactions,5/31/21 9:14,14:24.9,e20020,58,140,50,180,100,698,3.03685,Count rate 20/s @ 05:14,90
+168,PROD,Trigger on reactions,5/31/21 10:14,14:50.4,e20020,58,140,50,180,100,698,3.03685,Count rate 20/s @ 06:14,90
+169,PROD,Trigger on reactions,5/31/21 11:15,00:25.3,e20020,58,140,50,180,100,698,3.03685,Count rate 15/s @ 07:14,90
