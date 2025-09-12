@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [True, True, True, False],
+    [False, False, False, True],
     workspace_path,
     trace_path,
 )
