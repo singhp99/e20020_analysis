@@ -84,7 +84,7 @@ det_params = DetectorParameters(
     garfield_file_path=Path(
         "/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/e20009_parameters/electrons_e20020.txt"
     ),
-    do_garfield_correction=True,
+    do_garfield_correction=False,
 )
 
 cluster_params = ClusterParameters(
@@ -159,7 +159,7 @@ pipe = Pipeline(
         EstimationPhase(estimate_params, det_params),
         InterpSolverPhase(solver_params, det_params),
      ],
-    [False, False, False, True],
+    [False, False, False, False],
     workspace_path,
     trace_path,
 )
