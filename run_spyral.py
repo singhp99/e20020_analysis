@@ -84,7 +84,7 @@ det_params = DetectorParameters(
     garfield_file_path=Path(
         "/mnt/home/singhp19/O16_driftvel_analysis/e20020_analysis/e20009_parameters/e20009_efield_correction.txt"
     ),
-    do_garfield_correction=True,
+    do_garfield_correction=True, #SET FALSE
 )
 
 cluster_params = ClusterParameters(
