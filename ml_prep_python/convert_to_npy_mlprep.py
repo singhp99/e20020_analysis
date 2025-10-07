@@ -43,7 +43,7 @@ def combine_h5(run_num, counter_idx):
         if event in group_cr_3plus and label_key in group_cr_3plus:
             labels = np.unique(group_cr_3plus[label_key])
             size = len(labels)
-            if size >= 3:
+            if size >= 3 and size < 6: #otherwise stuff with labels above passes through
                 new_key = f"event_{counter_idx}"
                 group_out.create_dataset(new_key, data=group_cr_3plus[event][:])
                 group_label.create_dataset(new_key, data=size)
