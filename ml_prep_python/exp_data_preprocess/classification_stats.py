@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 def handlanel_stat():
-    run_num = 104
-    noise = 1
+    run_num = 106
+    noise = 0
     data = np.load(f"/Volumes/researchEXT/O16/ml models/data_exp_pred/run{run_num}_16O_size800_test_features.npy")
     predicted_labels = np.load(f"/Users/pranjalsingh/Desktop/research_space_spyral/experiment_predicted/exp{run_num}_pred_w{noise}.npy")
     view_class = 4 #number of tracks - 1
@@ -28,7 +28,7 @@ def handlanel_stat():
             plt.tight_layout()
             plt.show()
             
-            input_val = input("Hand label this event ior [q] for quit: ")
+            input_val = input(f"{i} Hand label this event or [q] for quit: ")
             
             if input_val == "q":
                 unique_post, counts_post = np.unique(predicted_labels, return_counts=True)
@@ -47,6 +47,8 @@ def handlanel_stat():
             
             
     unique_post, counts_post = np.unique(handlab_stat, return_counts=True)
+    
+    print(f"The class distribution for {noise}% data: {unique,counts}")
     print(f"The class distribution for {noise}% data: {unique_post,counts_post} from total of {len(handlab_stat)} events with predicted class {view_class}")
         
             
