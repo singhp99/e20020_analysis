@@ -3,8 +3,16 @@ import numpy as np
 import tqdm
 from pathlib import Path
 
+"""
+This file is for the purpose of sorting pc clouds on the basis of predicted labels 
+"""
+def filter_tracks(class_of_intrest: int | list, run_num: int):
+    """Only assigning the filtered events to the new pc file
 
-def filter_tracks(class_of_intrest, run_num):
+    Args:
+        class_of_intrest (int or list): The class of interest I want 
+        run_num (int): run_num for each run processing 
+    """
     run_str = f"00{run_num}" if run_num < 100 else f"0{run_num}"
     pc_path = f"/Volumes/researchEXT/O16/no_efield/PointcloudLegacy/run_{run_str}.h5" #point clouds for experiment 
     file_exists = Path(pc_path) 
@@ -32,7 +40,14 @@ def filter_tracks(class_of_intrest, run_num):
             
             for i, key in enumerate(tqdm.tqdm(valid_keys, desc=f"Filtering run {run_num}")):
                 if predicted_labels[i] == class_of_intrest and key in pc_data:
-                    new_group.create_dataset(key, data=pc_data[key][:])  
+                    new_data = new_group.create_dataset(key, data=pc_data[key][:])  
+                    new_data.attrs["ic_amplitude"] = float(-1)
+                    new_data.attrs["ic_integral"] = float(-1)
+                    new_data.attrs["ic_centroid"] = float(-1)
+                    new_data.attrs["ic_multiplicity"] = float(-1)
+                    new_data.attrs["ic_sca_centroid"] = float(-1)
+                    new_data.attrs["ic_sca_multiplicity"] = float(-1)
+                    
                     class_counter +=1
                 
         print(f"Number of events for predicted label {class_of_intrest}: {class_counter}") 
