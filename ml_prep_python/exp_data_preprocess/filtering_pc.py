@@ -33,14 +33,19 @@ def filter_tracks(class_of_intrest: int | list, run_num: int):
         min_event = np.int64(valid_keys[0].strip("cloud_")) #need to set min event as an attr
         max_event = np.int64(valid_keys[-1].strip("cloud_")) #need to set max event as an attr
         class_counter = 0
-        with h5py.File(f"/Volumes/researchEXT/O16/no_efield/no_field_only_1_2_tracks/PointcloudLegacy/run_{run_str}.h5","w") as f:
+        with h5py.File(f"/Volumes/researchEXT/O16/no_efield/no_field_fitracks_v1.0/Pointcloud/run_{run_str}.h5","w") as f:
             new_group = f.create_group("cloud")
             new_group.attrs["min_event"] = min_event
             new_group.attrs["max_event"] = max_event
             
-            for i, key in enumerate(tqdm.tqdm(valid_keys, desc=f"Filtering run {run_num}")):
+            for i, key in enumerate(valid_keys):
                 if predicted_labels[i] == any(class_of_intrest) and key in pc_data:
+                    data = pc_data[key][:]
+                    
                     new_data = new_group.create_dataset(key, data=pc_data[key][:])  
+                    new_data.attrs["orig_run"] =  run_num #added for new spyral version
+                    new_data.attrs["orig_event"] = int(key.strip("cloud_")) #added for new spyral version
+                    
                     new_data.attrs["ic_amplitude"] = float(-1)
                     new_data.attrs["ic_integral"] = float(-1)
                     new_data.attrs["ic_centroid"] = float(-1)
@@ -49,13 +54,12 @@ def filter_tracks(class_of_intrest: int | list, run_num: int):
                     new_data.attrs["ic_sca_multiplicity"] = float(-1)
                     
                     class_counter +=1
-                
-        print(f"Number of events for predicted label {class_of_intrest}: {class_counter}") 
+        # print(f"Number of events for predicted label {class_of_intrest}: {class_counter}") 
 
     
 def main():
-    class_to_filter = [1,2]
-    for run_num in range(54,170):
+    class_to_filter = [5]
+    for run_num in tqdm.tqdm(range(54,170),desc="Filtering runs"):
         filter_tracks(class_to_filter,run_num)
     
     
