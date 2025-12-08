@@ -58,8 +58,8 @@ def filter_tracks(class_of_intrest: int | list, run_num: int):
 
     
 def main():
-    class_to_filter = [5]
-    for run_num in tqdm.tqdm(range(54,170),desc="Filtering runs"):
+    class_to_filter = [4]
+    for run_num in tqdm.tqdm(range(104,105),desc="Filtering runs"):
         filter_tracks(class_to_filter,run_num)
     
     

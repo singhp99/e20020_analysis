@@ -43,7 +43,7 @@ def combine_h5(run_num, counter_idx):
         if event in group_cr_3plus and label_key in group_cr_3plus:
             labels = np.unique(group_cr_3plus[label_key])
             size = len(labels)
-            if size >= 3 and size < 6: #otherwise stuff with labels above passes through
+            if size >= 3 and size < 7: #otherwise stuff with labels above passes through
                 new_key = f"event_{counter_idx}"
                 group_out.create_dataset(new_key, data=group_cr_3plus[event][:])
                 group_label.create_dataset(new_key, data=size)
@@ -111,7 +111,7 @@ def view_events(npy_file):
     data = np.load(npy_file)
 
     num_events = data.shape[0]
-    print(f"Loaded {num_events} events from: {npy_file}")
+    # print(f"Loaded {num_events} events from: {npy_file}")
     #change
 
     idx = int(input("Event to look at: "))
@@ -142,17 +142,14 @@ def view_events(npy_file):
             print("Invalid command. Use 'n', 'p', or 'q'.")
 
 # if __name__ == "__main__":
-#     if len(sys.argv) < 2:
-#         print("Usage: python view_npy_events.py path_to_npy_file.npy")
-#     else:
-#         view_events(sys.argv[1])
+#     view_events("/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector/run_0000.h5")
 
 
 
 if __name__ == "__main__":
     #run_range = [3,4,5]
     #counter = 0
-    for run in range(26,45):
+    for run in range(0,2):
         print(f"\n--- Starting run {run} ---")
         #counter = combine_h5(run, counter)
         convert(run)
