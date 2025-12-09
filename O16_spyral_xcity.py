@@ -508,7 +508,7 @@ def spyral_engine_viz(name1):
     min_event = attributes["min_event"]
     max_event = attributes["max_event"]
 
-    for i in range(min_event,min_event+20):
+    for i in range(min_event,min_event+500):
         event = f"cloud_{i}"
         if event in group_cr:
             if len(group_cr[event][:]) < 200:
@@ -522,7 +522,7 @@ def spyral_engine_viz(name1):
             label = np.unique(group_cr[label_key])
             size = len(label)
 
-            if size != 5:
+            if size != 1:
                 continue
 
             fig = plt.figure()
@@ -579,7 +579,7 @@ def vertex_z_dist(estimate_df):
 
 def main():
     #for run_num in [271,274,275,277,278,279]:
-    for run_num in range(0,2): #104,105,106,108,109,110,111,112,113,114,116
+    for run_num in range(0,16): #104,105,106,108,109,110,111,112,113,114,116
         print(run_num)
         if run_num < 10:
             name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_123_tracks/run_000{run_num}.h5"
