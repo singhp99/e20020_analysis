@@ -508,7 +508,7 @@ def spyral_engine_viz(name1):
     min_event = attributes["min_event"]
     max_event = attributes["max_event"]
 
-    for i in range(min_event,min_event+500):
+    for i in range(min_event,min_event+50):
         event = f"cloud_{i}"
         if event in group_cr:
             if len(group_cr[event][:]) < 200:
@@ -522,7 +522,7 @@ def spyral_engine_viz(name1):
             label = np.unique(group_cr[label_key])
             size = len(label)
 
-            if size != 1:
+            if size != 5:
                 continue
 
             fig = plt.figure()
@@ -579,12 +579,12 @@ def vertex_z_dist(estimate_df):
 
 def main():
     #for run_num in [271,274,275,277,278,279]:
-    for run_num in range(0,16): #104,105,106,108,109,110,111,112,113,114,116
+    for run_num in range(0,1): #104,105,106,108,109,110,111,112,113,114,116
         print(run_num)
         if run_num < 10:
-            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_123_tracks/run_000{run_num}.h5"
+            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_456_tracks/run_000{run_num}.h5"
         else:
-            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_123_tracks/run_00{run_num}.h5"
+            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_456_tracks/run_00{run_num}.h5"
         name2 = "/Users/mahesh/Desktop/academics/research/o16_analysis/Cluster/run_0"+str(run_num)+".h5"
         estimate_df = f"/Volumes/researchEXT/O16/O16_spyral_analysis/Estimation/run_00{run_num}.parquet"
         est_path = f"/Users/mahesh/Desktop/academics/spyral_eng/engine_ml_prep/run000{run_num}_est_spy.h5"
@@ -605,8 +605,8 @@ def main():
         #vis_cluspc(name1,est_path)
         #num_points_eachevent(name1,est_path)
         #extrt_clusph(name2, bal_mltrain_clus, bal_mltrain_cllabels)
-        engine_count_class(name1)
-        #spyral_engine_viz(name1)
+        #engine_count_class(name1)
+        spyral_engine_viz(name1)
         #vertex_z_dist(estimate_df)
 
 

@@ -17,7 +17,7 @@ def filter_tracks(class_of_intrest: int | list, run_num: int):
     pc_path = f"/Volumes/researchEXT/O16/no_efield/PointcloudLegacy/run_{run_str}.h5" #point clouds for experiment 
     file_exists = Path(pc_path) 
 
-    predicted_path = Path(f"/Volumes/researchEXT/O16/ml models/O16_w1_noise_predicted_allruns/exp{run_num}_pred_w1.npy")
+    predicted_path = Path(f"/Users/pranjalsingh/Desktop/research_space_spyral/experiment_predicted/exp{run_num}_pred_w1.npy")
 
     valid_keys_path = Path(f"/Volumes/researchEXT/O16/ml models/valid_keys/run{run_num}_valid_nonzero_keys.npy") #only valid )keys for point cloud 
 
@@ -39,7 +39,7 @@ def filter_tracks(class_of_intrest: int | list, run_num: int):
             new_group.attrs["max_event"] = max_event
             
             for i, key in enumerate(valid_keys):
-                if predicted_labels[i] == any(class_of_intrest) and key in pc_data:
+                if predicted_labels[i] == class_of_intrest and key in pc_data:
                     data = pc_data[key][:]
                     
                     new_data = new_group.create_dataset(key, data=pc_data[key][:])  
@@ -54,11 +54,11 @@ def filter_tracks(class_of_intrest: int | list, run_num: int):
                     new_data.attrs["ic_sca_multiplicity"] = float(-1)
                     
                     class_counter +=1
-        # print(f"Number of events for predicted label {class_of_intrest}: {class_counter}") 
+        print(f"Number of events for predicted label {class_of_intrest}: {class_counter}") 
 
     
 def main():
-    class_to_filter = [4]
+    class_to_filter = 4
     for run_num in tqdm.tqdm(range(104,105),desc="Filtering runs"):
         filter_tracks(class_to_filter,run_num)
     
