@@ -508,10 +508,10 @@ def spyral_engine_viz(name1):
     min_event = attributes["min_event"]
     max_event = attributes["max_event"]
 
-    for i in range(min_event,min_event+50):
+    for i in range(min_event,min_event+300):
         event = f"cloud_{i}"
         if event in group_cr:
-            if len(group_cr[event][:]) < 200:
+            if len(group_cr[event][:]) < 20:
                 continue
 
             x = group_cr[event][:, 0]
@@ -522,7 +522,7 @@ def spyral_engine_viz(name1):
             label = np.unique(group_cr[label_key])
             size = len(label)
 
-            if size != 5:
+            if size != 3:
                 continue
 
             fig = plt.figure()
@@ -576,15 +576,49 @@ def vertex_z_dist(estimate_df):
     # plt.show()
 
 
+def label_distribution(label_post_dist):
+    """
+    This function gives a distribution of the classes 
+
+    Args:
+        label_post_dist (_type_): _description_
+    """
+    file_label = h5py.File(label_post_dist, 'r')
+    groupn_label = list(file_label.keys())[0]  # Get the first group name
+    group_lb = file_label[groupn_label]  # Access the group
+    
+    class_count = [0,0,0,0,0,0]
+    
+    for event in group_lb:
+        nclus = group_lb[event][()]
+        if int(nclus) == 1:
+            class_count[0]+=1
+        elif int(nclus) == 2:
+            class_count[1]+=1
+        elif int(nclus) == 3:
+            class_count[2]+=1
+        elif int(nclus) == 4:
+            class_count[3]+=1
+        elif int(nclus) == 5:
+            class_count[4]+=1
+        elif int(nclus) == 6:
+            class_count[5]+=1
+            
+    print("Number of events in each class:",class_count)
+    
+    
+    
+    
+
 
 def main():
     #for run_num in [271,274,275,277,278,279]:
     for run_num in range(0,1): #104,105,106,108,109,110,111,112,113,114,116
         print(run_num)
         if run_num < 10:
-            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_456_tracks/run_000{run_num}.h5"
+            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/longer_tracks_456/run_000{run_num}.h5"
         else:
-            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/detector_456_tracks/run_00{run_num}.h5"
+            name1 = f"/Users/pranjalsingh/Desktop/research_space_engine/e20020_engine/my_sim/output/kinematics/longer_tracks_456/run_00{run_num}.h5"
         name2 = "/Users/mahesh/Desktop/academics/research/o16_analysis/Cluster/run_0"+str(run_num)+".h5"
         estimate_df = f"/Volumes/researchEXT/O16/O16_spyral_analysis/Estimation/run_00{run_num}.parquet"
         est_path = f"/Users/mahesh/Desktop/academics/spyral_eng/engine_ml_prep/run000{run_num}_est_spy.h5"
@@ -593,6 +627,7 @@ def main():
         #pulse_run = "/Users/mahesh/Desktop/academics/research/o16_analysis/PointcloudLegacy/run_0173.h5"
         bal_mltrain_clus = f"/Users/mahesh/Desktop/academics/spring 2025/applied ml/ml_final_project/features_est/run0{run_num}_data_spy.h5"
         bal_mltrain_cllabels = f"/Volumes/researchEXT/O16/o16_ml_analysis/O16_balmltrain_clus/run0{run_num}_labels_spy.h5"
+        label_post_dist = f"/Volumes/researchEXT/24Mg/mg24_ml_training_prep/run_000{run_num}_labels.h5"
         #rmv_nans(name1)
         #estimate_h5(estimate_df,run_num,est_path)
         #vis_cluspc(name1,est_path)
@@ -608,6 +643,7 @@ def main():
         #engine_count_class(name1)
         spyral_engine_viz(name1)
         #vertex_z_dist(estimate_df)
+        #label_distribution(label_post_dist)
 
 
 if __name__=="__main__":    
